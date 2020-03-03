@@ -18,7 +18,7 @@ public class ReservationsResource {
     private final ReservationService reservationService;
 
     @GetMapping
-    public List<Reservation> Reservations(@RequestParam(value = "roomNumber", required = false) Integer roomNumber){
+    public List<Reservation> getReservations(@RequestParam(value = "roomNumber", required = false) Integer roomNumber){
         if(roomNumber == null){
             return reservationService.getAllReservations();
         } else {
