@@ -5,6 +5,8 @@ import com.example.pekarsky.reservations.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
@@ -25,17 +27,18 @@ public class ReservationsResource {
     }
 
     @GetMapping("/{reservationId}")
-    public Reservation getReservationById(@PathVariable Integer reservationId){
-        return null;
+    public Reservation getReservationById(@PathVariable Long reservationId){
+        return reservationService.getById(reservationId);
     }
 
     @PostMapping
-    public URL createReservation(Reservation reservation){
-        return null;
+    public URL createReservation(@RequestBody Reservation reservation, HttpServletRequest request) throws MalformedURLException {
+        Reservation savedReservation = reservationService.save(reservation);
+        return new URL(request.getRequestURL().append(savedReservation.getId()).toString());
     }
 
     @PutMapping("/{reservationId}")
-    public Reservation updateReservation(@PathVariable Integer reservationId, Reservation reservation){
+    public Reservation updateReservation(@PathVariable Integer reservationId, @RequestBody Reservation reservation){
         return null;
     }
 
@@ -43,9 +46,5 @@ public class ReservationsResource {
     public void deleteReservation(@PathVariable String reservationId){
 
     }
-//
-//    @GetMapping
-//    public List<Reservation> getReservationByRoomNumber(){
-//        return null;
-//    }
+
 }

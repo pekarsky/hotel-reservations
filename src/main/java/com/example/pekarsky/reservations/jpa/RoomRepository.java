@@ -1,7 +1,7 @@
 package com.example.pekarsky.reservations.jpa;
 
-import org.springframework.stereotype.Repository;
+import com.example.pekarsky.reservations.model.Room;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
-public interface RoomRepository {
+public interface RoomRepository extends JpaRepository<Room, Long> {
 }
