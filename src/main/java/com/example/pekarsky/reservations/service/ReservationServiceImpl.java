@@ -1,7 +1,6 @@
 package com.example.pekarsky.reservations.service;
 
 import com.example.pekarsky.reservations.jpa.ReservationRepository;
-import com.example.pekarsky.reservations.jpa.RoomRepository;
 import com.example.pekarsky.reservations.model.Reservation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import java.util.List;
 public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository reservationRepository;
-    private final RoomRepository roomRepository;
 
     @Override
     @Transactional(readOnly = true)

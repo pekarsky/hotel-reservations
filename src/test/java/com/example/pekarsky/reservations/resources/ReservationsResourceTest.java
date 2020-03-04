@@ -1,5 +1,6 @@
 package com.example.pekarsky.reservations.resources;
 
+import com.example.pekarsky.reservations.mapper.ReservationDtoMapper;
 import com.example.pekarsky.reservations.service.ReservationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,9 @@ class ReservationsResourceTest {
 
     @Mock
     private ReservationService reservationServiceMock;
+
+    @Mock
+    private ReservationDtoMapper mapper;
 
     @InjectMocks
     private ReservationsResource reservationsResource;

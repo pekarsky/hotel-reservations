@@ -1,5 +1,7 @@
 package com.example.pekarsky.reservations.resources;
 
+import com.example.pekarsky.reservations.dto.ReservationDto;
+import com.example.pekarsky.reservations.mapper.ReservationDtoMapper;
 import com.example.pekarsky.reservations.model.Reservation;
 import com.example.pekarsky.reservations.service.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +18,14 @@ import java.util.List;
 public class ReservationsResource {
 
     private final ReservationService reservationService;
+    private final ReservationDtoMapper mapper;
 
     @GetMapping
-    public List<Reservation> getReservations(@RequestParam(value = "roomNumber", required = false) Integer roomNumber){
+    public List<ReservationDto> getReservations(@RequestParam(value = "roomNumber", required = false) Integer roomNumber){
         if(roomNumber == null){
-            return reservationService.getAllReservations();
+            return mapper.toDtoList(reservationService.getAllReservations());
         } else {
-            return reservationService.getReservationsByRoomNumber(roomNumber);
+            return mapper.toDtoList(reservationService.getReservationsByRoomNumber(roomNumber));
         }
     }
 
@@ -32,13 +35,13 @@ public class ReservationsResource {
     }
 
     @PostMapping
-    public URL createReservation(@RequestBody Reservation reservation, HttpServletRequest request) throws MalformedURLException {
-        Reservation savedReservation = reservationService.save(reservation);
+    public URL createReservation(@RequestBody ReservationDto reservationDto, HttpServletRequest request) throws MalformedURLException {
+        Reservation savedReservation = reservationService.save(mapper.toEntity(reservationDto));
         return new URL(request.getRequestURL().append(savedReservation.getId()).toString());
     }
 
     @PutMapping("/{reservationId}")
-    public Reservation updateReservation(@PathVariable Integer reservationId, @RequestBody Reservation reservation){
+    public ReservationDto updateReservation(@PathVariable Integer reservationId, @RequestBody ReservationDto reservation){
         return null;
     }
 
