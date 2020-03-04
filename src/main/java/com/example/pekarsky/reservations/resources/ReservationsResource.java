@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/reservations")
@@ -32,7 +31,7 @@ public class ReservationsResource {
 
     @GetMapping("/{reservationId}")
     public ReservationDto getReservationById(@PathVariable Long reservationId) throws ReservationNotFoundException {
-        return mapper.toDto(Optional.ofNullable(reservationService.getById(reservationId)).orElseThrow(ReservationNotFoundException::new));
+        return mapper.toDto(reservationService.getById(reservationId));
     }
 
     @PostMapping
@@ -44,7 +43,7 @@ public class ReservationsResource {
 
     @PutMapping("/{reservationId}")
     public ReservationDto updateReservation(@PathVariable Integer reservationId, @RequestBody ReservationDto reservation) {
-        return null;
+        return mapper.toDto(reservationService.update(mapper.toEntity(reservation)));
     }
 
     @DeleteMapping("/{reservationId}")

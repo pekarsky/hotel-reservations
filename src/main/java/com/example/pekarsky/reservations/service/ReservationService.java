@@ -9,4 +9,5 @@ public interface ReservationService {
     List<Reservation> getAllReservations();
     List<Reservation> getReservationsByRoomNumber(Integer roomNumber);
     Reservation save(Reservation reservation);
+    Reservation update(Reservation reservation);
 }
