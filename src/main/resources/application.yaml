@@ -11,3 +11,7 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
   banner:
     location: classpath:banner.txt
+
+server:
+  error:
+    include-stacktrace: on_trace_param

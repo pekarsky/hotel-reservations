@@ -44,7 +44,7 @@ public class ReservationsResourceIT {
         mvc.perform(MockMvcRequestBuilders.post("/reservations/")
                 .content(asJsonString(dto))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ReservationsResourceIT {
         MvcResult createReservationResult = mvc.perform(MockMvcRequestBuilders.post("/reservations/")
                 .content(asJsonString(dto))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isCreated()).andReturn();
         String newReservationUrl = createReservationResult.getResponse().getContentAsString();
         MvcResult reservationResult = mvc.perform(MockMvcRequestBuilders.get(newReservationUrl)
                 .contentType(MediaType.APPLICATION_JSON)).andReturn();
@@ -61,6 +61,13 @@ public class ReservationsResourceIT {
         assertEquals(dto.getRoomNumber(), retrievedDto.getRoomNumber());
         assertNotNull(retrievedDto.getId());
         assertEquals(dto.getGuests(), retrievedDto.getGuests());
+    }
+
+    @Test
+    public void testNotFoundOnGettingNonExistentReservationById() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/reservations/99999999")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     public static String asJsonString(final Object obj) {
