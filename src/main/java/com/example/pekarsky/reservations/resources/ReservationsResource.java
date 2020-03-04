@@ -21,8 +21,8 @@ public class ReservationsResource {
     private final ReservationDtoMapper mapper;
 
     @GetMapping
-    public List<ReservationDto> getReservations(@RequestParam(value = "roomNumber", required = false) Integer roomNumber){
-        if(roomNumber == null){
+    public List<ReservationDto> getReservations(@RequestParam(value = "roomNumber", required = false) Integer roomNumber) {
+        if (roomNumber == null) {
             return mapper.toDtoList(reservationService.getAllReservations());
         } else {
             return mapper.toDtoList(reservationService.getReservationsByRoomNumber(roomNumber));
@@ -30,23 +30,23 @@ public class ReservationsResource {
     }
 
     @GetMapping("/{reservationId}")
-    public Reservation getReservationById(@PathVariable Long reservationId){
-        return reservationService.getById(reservationId);
+    public ReservationDto getReservationById(@PathVariable Long reservationId) {
+        return mapper.toDto(reservationService.getById(reservationId));
     }
 
     @PostMapping
-    public URL createReservation(@RequestBody ReservationDto reservationDto, HttpServletRequest request) throws MalformedURLException {
+    public String createReservation(@RequestBody ReservationDto reservationDto, HttpServletRequest request) {
         Reservation savedReservation = reservationService.save(mapper.toEntity(reservationDto));
-        return new URL(request.getRequestURL().append(savedReservation.getId()).toString());
+        return request.getRequestURL().append(savedReservation.getId()).toString();
     }
 
     @PutMapping("/{reservationId}")
-    public ReservationDto updateReservation(@PathVariable Integer reservationId, @RequestBody ReservationDto reservation){
+    public ReservationDto updateReservation(@PathVariable Integer reservationId, @RequestBody ReservationDto reservation) {
         return null;
     }
 
     @DeleteMapping("/{reservationId}")
-    public void deleteReservation(@PathVariable String reservationId){
+    public void deleteReservation(@PathVariable String reservationId) {
 
     }
 
