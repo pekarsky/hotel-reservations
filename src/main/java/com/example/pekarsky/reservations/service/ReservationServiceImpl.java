@@ -48,4 +48,9 @@ public class ReservationServiceImpl implements ReservationService {
         persistedReservation.setGuests(reservation.getGuests());
         return reservationRepository.save(persistedReservation);
     }
+
+    @Override
+    public void delete(Long reservationId) {
+        reservationRepository.deleteById(reservationId);
+    }
 }

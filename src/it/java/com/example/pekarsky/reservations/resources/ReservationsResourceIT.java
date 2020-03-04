@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -40,16 +42,18 @@ public class ReservationsResourceIT {
 
     @Test
     public void testSuccessOnCreatingReservation() throws Exception {
-        ReservationDto dto = ReservationDto.builder().roomNumber(101).guests(4).build();
+        ReservationDto dto = prepareReservation();
         mvc.perform(MockMvcRequestBuilders.post("/reservations/")
                 .content(asJsonString(dto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
     }
 
+
+
     @Test
     public void testSuccessCreateAndRetrieveReservation() throws Exception {
-        ReservationDto dto = ReservationDto.builder().roomNumber(101).guests(4).build();
+        ReservationDto dto = prepareReservation();
         MvcResult createReservationResult = mvc.perform(MockMvcRequestBuilders.post("/reservations/")
                 .content(asJsonString(dto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -68,6 +72,15 @@ public class ReservationsResourceIT {
         mvc.perform(MockMvcRequestBuilders.get("/reservations/99999999")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    private ReservationDto prepareReservation() {
+        return ReservationDto.builder()
+                .roomNumber(101)
+                .startDate(LocalDate.of(2020, 3, 1))
+                .endDate(LocalDate.of(2020, 3, 9))
+                .guests(4)
+                .build();
     }
 
     public static String asJsonString(final Object obj) {

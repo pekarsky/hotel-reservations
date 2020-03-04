@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.util.List;
 
 @RestController
@@ -36,19 +38,22 @@ public class ReservationsResource {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String createReservation(@RequestBody ReservationDto reservationDto, HttpServletRequest request) {
+    public String createReservation(@Valid @RequestBody ReservationDto reservationDto, HttpServletRequest request) {
         Reservation savedReservation = reservationService.save(mapper.toEntity(reservationDto));
         return request.getRequestURL().append(savedReservation.getId()).toString();
     }
 
     @PutMapping("/{reservationId}")
-    public ReservationDto updateReservation(@PathVariable Integer reservationId, @RequestBody ReservationDto reservation) {
-        return mapper.toDto(reservationService.update(mapper.toEntity(reservation)));
+    public ReservationDto updateReservation(@PathVariable Long reservationId, @Valid @RequestBody ReservationDto reservationDto) {
+        if(!reservationId.equals(reservationDto.getId())){
+            throw new ValidationException("Reservation ID from URL is not equal to Id from Dto");
+        }
+        return mapper.toDto(reservationService.update(mapper.toEntity(reservationDto)));
     }
 
     @DeleteMapping("/{reservationId}")
-    public void deleteReservation(@PathVariable String reservationId) {
-
+    public void deleteReservation(@PathVariable Long reservationId) {
+        reservationService.delete(reservationId);
     }
 
 }
