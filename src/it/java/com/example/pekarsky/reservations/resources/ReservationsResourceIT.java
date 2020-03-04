@@ -15,9 +15,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,8 +49,6 @@ public class ReservationsResourceIT {
                 .andExpect(status().isCreated());
     }
 
-
-
     @Test
     public void testSuccessCreateAndRetrieveReservation() throws Exception {
         ReservationDto dto = prepareReservation();
@@ -72,6 +70,59 @@ public class ReservationsResourceIT {
         mvc.perform(MockMvcRequestBuilders.get("/reservations/99999999")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testReserveDifferentRoomsAndGetOnlyByRoom() throws Exception {
+        //reserve room 102
+        ReservationDto dtoRoom102 = prepareReservation();
+        dtoRoom102.setRoomNumber(102);
+        mvc.perform(MockMvcRequestBuilders.post("/reservations/")
+                .content(asJsonString(dtoRoom102))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+        //reserve room 202
+        ReservationDto dtoRoom202 = prepareReservation();
+        dtoRoom202.setRoomNumber(202);
+        mvc.perform(MockMvcRequestBuilders.post("/reservations/")
+                .content(asJsonString(dtoRoom202))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+        //once again
+        dtoRoom202.setRoomNumber(202);
+        mvc.perform(MockMvcRequestBuilders.post("/reservations/")
+                .content(asJsonString(dtoRoom202))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+        MvcResult reservationsByRoomResult = mvc.perform(MockMvcRequestBuilders.get("/reservations/?roomNumber=202")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+        ReservationDto[] reservationsByRoomNumber = asObject(reservationsByRoomResult.getResponse().getContentAsString(), ReservationDto[].class);
+
+        assertNotNull(reservationsByRoomNumber);
+        assertTrue(Arrays.stream(reservationsByRoomNumber).allMatch(r -> r.getRoomNumber().equals(202)));
+        assertTrue(reservationsByRoomNumber.length == 2);
+    }
+
+    @Test
+    public void testSuccessCreateAndDeleteReservation() throws Exception {
+        ReservationDto dto = prepareReservation();
+        MvcResult createReservationResult = mvc.perform(MockMvcRequestBuilders.post("/reservations/")
+                .content(asJsonString(dto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated()).andReturn();
+        String newReservationUrl = createReservationResult.getResponse().getContentAsString();
+        mvc.perform(MockMvcRequestBuilders.delete(newReservationUrl)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        //deleted reservation cannot be retrieved
+        mvc.perform(MockMvcRequestBuilders.get(newReservationUrl)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+        //delete to be idempotent
+        mvc.perform(MockMvcRequestBuilders.delete(newReservationUrl)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     private ReservationDto prepareReservation() {

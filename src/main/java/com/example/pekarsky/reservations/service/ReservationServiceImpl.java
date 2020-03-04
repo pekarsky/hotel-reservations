@@ -51,6 +51,8 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public void delete(Long reservationId) {
-        reservationRepository.deleteById(reservationId);
+        if (reservationRepository.existsById(reservationId)) {
+            reservationRepository.deleteById(reservationId);
+        }
     }
 }
