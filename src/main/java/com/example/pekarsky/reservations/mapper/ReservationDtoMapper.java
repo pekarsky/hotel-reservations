@@ -16,6 +16,4 @@ public interface ReservationDtoMapper {
     Reservation toEntity(ReservationDto dto);
 
     List<ReservationDto> toDtoList(List<Reservation> entityList);
-
-    List<Reservation> toEntityList(List<ReservationDto> dtoList);
 }
