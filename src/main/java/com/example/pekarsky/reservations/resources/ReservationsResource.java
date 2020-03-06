@@ -15,10 +15,11 @@ import javax.validation.ValidationException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/reservations")
+@RequestMapping(ReservationsResource.RESERVATIONS_RESOURCE_PATH)
 @RequiredArgsConstructor
 public class ReservationsResource {
 
+    public static final String RESERVATIONS_RESOURCE_PATH = "/reservations";
     private final ReservationService reservationService;
     private final ReservationDtoMapper mapper;
 
@@ -36,11 +37,11 @@ public class ReservationsResource {
         return mapper.toDto(reservationService.getById(reservationId));
     }
 
-    @PostMapping
+    @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public String createReservation(@Valid @RequestBody ReservationDto reservationDto, HttpServletRequest request) {
         Reservation savedReservation = reservationService.save(mapper.toEntity(reservationDto));
-        return request.getRequestURL().append(savedReservation.getId()).toString();
+        return request.getRequestURL().append("/").append(savedReservation.getId()).toString();
     }
 
     @PutMapping("/{reservationId}")
